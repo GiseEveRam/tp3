@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+  
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Iconos FontAwesome -->
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  
+  <title>Stock Control</title>
+
+  <style>
+    /* reset */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #989496;
+    }
+    
+    label{
+        display: block;
+        margin-top: 10px;
+    }
+    input{
+        width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+    .acciones{
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .panel {
+        width: 300px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #7ecdbc;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        
+    }
+    
+</style>
+
+ </head>
+
+<body>
+
+    <!-- Contenedor para nuestro componente de React -->
+<div id="root"></div>
+    <script>
+        const DatosProductos = [
+            { id: 1, productocod: '1', nombre: 'Coca-Cola', codigo: '7799876543210', clasificado: true },
+            { id: 2, productocod: '2', nombre: 'Fanta', codigo: '7799876243212', clasificado: false },
+            { id: 3, productocod: '3', nombre: 'Pepsi', codigo: '9799876542210', clasificado: true },
+            { id: 4, productocod: '4', nombre: 'Burgol', codigo: '8799876543211', clasificado: false },
+            { id: 5, productocod: '5', nombre: 'Arroz Luchetti', codigo: '8799876543211', clasificado: true },
+            { id: 6, productocod: '6', nombre: 'Fideos spaguetti', codigo: '791776543211', clasificado: false },
+            { id: 7, productocod: '7', nombre: 'Arroz Gallo', codigo: '7799876534210', clasificado: true },
+            { id: 8, productocod: '8', nombre: 'Yerba Amanda', codigo: '7709821543210', clasificado: false },
+            { id: 9, productocod: '9', nombre: 'Sal gruesa', codigo: '7699876541210', clasificado: true },
+            { id: 10, productocod: '10', nombre: 'Sal Fina', codigo: '759987654210', clasificado: false },
+            { id: 11, productocod: '11', nombre: 'Vinagre', codigo: '7199876543210', clasificado: true },
+            { id: 12, productocod: '12', nombre: 'Te', codigo: '7699876243210', clasificado: false },
+            { id: 13, productocod: '13', nombre: 'Matecocido', codigo: '7799096543210', clasificado: true },
+            { id: 14, productocod: '14', nombre: 'Papas fritas', codigo: '77777876543210', clasificado: false },
+            { id: 15, productocod: '15', nombre: 'Desodorante', codigo: '7700876543210', clasificado: true },
+            { id: 16, productocod: '16', nombre: 'Jabon', codigo: '7799854343210', clasificado: false },
+            { id: 17, productocod: '17', nombre: 'Perfumina', codigo: '7799876543210', clasificado: true },
+            { id: 18, productocod: '18', nombre: 'Espiral', codigo: '7712376543210', clasificado: false },
+            { id: 19, productocod: '19', nombre: 'Criollitas', codigo: '7098876543210', clasificado: true },
+            { id: 20, productocod: '20', nombre: 'Tostadas leiva', codigo: '7793456543210', clasificado: false }
+        ]
+    </script>
+        
+    <script type="text/babel">
+        const { useState, useEffect } = React
+        const { createRoot } = ReactDOM
+        
+
+        function Editar({ producto, alGuardar, alCancelar }) {
+            let [productocod, setProductocod] = React.useState(producto.productocod)
+            let [nombre, setNombre] = React.useState(producto.nombre)
+            let [codigo, setCodigo] = React.useState(producto.codigo)
+
+            const guardar = () => {
+                alGuardar({ ...producto, productocod, nombre, codigo })
+            }
+            const cancelar = () => {
+                alCancelar()
+            }
+            return (
+                <form  className="panel">
+                    
+                    <label>Nombre:</label>
+                    <input type="text"
+                        value={nombre}
+                        onChange={e => setNombre(e.target.value)}
+                    />
+                    <label>Codigo:</label>
+                    <input type="text"
+                        value={codigo}
+                        onChange={e => setCodigo(e.target.value)}
+                    />
+                    <div className="acciones">
+                        <button type="button" onClick={guardar}>Guardar</button>
+                        <button type="button" onClick={cancelar}>Cancelar</button>
+                    </div>
+                </form>
+            )
+        }
+
+        function Mostrar({ producto, alEditar, alBorrar }) {
+            return (
+                <div className="panel">
+                    <h2>{producto.productocod} {producto.nombre}</h2>
+                    <p>{producto.codigo}</p>
+                    <div className="acciones">
+                        <button type="button" onClick={alEditar}>Editar</button>
+                        <button type="button" onClick={alBorrar}>Eliminar</button>
+                    </div>
+                </div>
+            )
+        } 
+        
+        function Agenda({productos, alDestruir, alAgregar, alEditar, alBorrar}){
+            return <div>
+                <button onClick={()=>alAgregar()}>Agregar</button>
+                <button onClick={()=>alDestruir()}>DESTRUIR</button>
+                {productos.map(producto => 
+                    <Mostrar
+                        key={producto.id} 
+                        producto={producto}
+                        alEditar={() => alEditar(producto.id)}
+                        alBorrar={() => alBorrar(producto.id)}
+                    />)}
+            </div>
+        }
+
+        function proximoId(productos){
+            return Math.max(...productos.map(c => c.id)) + 1
+        }
+
+        function guardarProductos(productos){
+            localStorage.setItem('productos', JSON.stringify(productos))
+        }
+
+        function leerProductos(){
+            let texto = localStorage.getItem('productos')
+            let lista = JSON.parse(texto)
+            return lista
+        }
+        
+
+        function App() {
+            let [editando, setEditando] = React.useState(false)
+            let [producto, setProducto] = React.useState(null)
+            let [productos, setProductos] = React.useState(() => leerProductos())
+            let [contador, setContador] = React.useState(0)
+
+            if(localStorage.getItem('productos')==null){
+                guardarProductos(DatosProductos)
+            }
+
+            useEffect( () => {
+                console.log("Cargando productos")
+                setProductos(leerProductos())
+
+                return () => {
+                    console.log("Limpiando")
+                }
+            }, [])
+
+            useEffect( () => {
+                console.log("Guardando productos")
+                guardarProductos(productos)
+            }, [productos])
+
+            useEffect( () => {
+                console.log("Editando", editando)
+            }, [editando])
+            
+
+            const agregar = () => {
+                let nuevo = {id: 0, productocod: '', nombre: '', codigo: ''}
+                setProducto(nuevo)
+                setEditando(true)
+                setContador(contador => contador + 1)
+                setContador(contador => contador + 1)
+                setContador(contador => contador + 1)
+                setContador(contador => contador + 1)
+                setContador(contador => contador + 1)
+            }
+
+            const editar = (id) => {
+                let producto = productos.find(c => c.id === id)
+                setProducto(producto)
+                setEditando(true)
+            }
+
+            const borrar = (id) => {
+                let copia = productos.filter(c => c.id !== id)
+                setProductos(copia)
+                console.log('Borrando', id)
+            }
+            
+            const guardar = (producto) => {
+                console.log('Guardando', producto)
+                if(producto.id == 0){
+                    //Alta
+                    let id = proximoId(productos)
+                    let copia = [...productos, {...producto, id}]
+                    setProductos(copia)
+                } else {
+                    //Modificacion}
+                    let copia = productos.map(
+                        c => c.id === producto.id ? producto : c)
+                        setProductos(copia)
+                    }
+                setEditando(false)
+            }
+
+            const cancelar = () => {
+                setEditando(false)
+            }
+
+
+            return <>
+                <h1>Producto {contador}</h1>
+                {
+                    editando
+                        ? <Editar producto={producto}
+                            alGuardar={guardar}
+                            alCancelar={cancelar}
+                        />
+                        : <Agenda
+                            productos={productos}
+                            alDestruir={()=>setProductos([])}
+                            alAgregar={agregar}
+                            alEditar={editar}
+                            alBorrar={borrar}
+                            />
+                
+                }
+                </>
+        }
+        const root = createRoot(document.getElementById('root'))
+        root.render(<App />);
+    </script>
+</body>
+
+</html
